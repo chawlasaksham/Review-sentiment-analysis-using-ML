@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Review Insights Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* Slate 100 */
+            background-image: radial-gradient(circle at top left, #e0e7ff, #f1f5f9 50%);
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e2e8f0; /* Slate 200 */
+            transform-style: preserve-3d;
+        }
+        .card:hover {
+            transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            color: #1e293b; /* Slate 800 */
+        }
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: #f8fafc; /* Slate 50 */
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0; /* Slate 200 */
+        }
+        .stat-card-icon {
+            flex-shrink: 0;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+        }
+        .recommendation-card {
+            border-left-width: 4px;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <div class="inline-block bg-white p-4 rounded-xl shadow-md">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">
+                    Business Insights Dashboard
+                </h1>
+            </div>
+        </header>
+
+        <!-- Upload Section -->
+        <div class="card p-6 mb-10">
+            <h2 class="section-title text-xl mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                <span>Upload Your Business Data</span>
+            </h2>
+            <form id="upload-form" class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="file" id="file-input" name="file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer"/>
+                <button type="submit" class="w-full sm:w-auto bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-300 ease-in-out flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/><path d="M3 22s0-4 4-4 4 4 4 4"/><path d="M21 22s0-4-4-4-4 4-4 4"/></svg>
+                    <span>Analyze Data</span>
+                </button>
+            </form>
+            <div id="loading" class="hidden text-center mt-6">
+                <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
+                <p class="text-indigo-600 mt-3 font-semibold">Analyzing data, please wait...</p>
+            </div>
+            <div id="error" class="hidden text-red-700 bg-red-100 p-4 rounded-lg mt-6 font-medium"></div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="hidden">
+             <!-- Strategic Insights Section -->
+            <section id="strategic-insights" class="mb-12">
+                <h2 class="section-title text-2xl mb-6 justify-center">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                    <span>Strategic Recommendations</span>
+                </h2>
+                <div class="card p-6">
+                    <h3 class="section-title text-lg mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                        <span>Actionable Advice</span>
+                    </h3>
+                    <div id="recommendations-content" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm"></div>
+                </div>
+            </section>
+
+            <!-- Main Analytics Section -->
+            <h2 class="section-title text-2xl mb-6 justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+                <span>Historical Analysis</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="card p-6 md:col-span-1 lg:col-span-1 flex flex-col items-center">
+                    <h3 class="section-title text-lg">Sentiment Analysis</h3>
+                    <img id="sentiment-pie-chart" src="" alt="Sentiment Analysis Pie Chart" class="max-w-full h-auto my-4"/>
+                    <div id="sentiment-stats" class="w-full text-sm space-y-2"></div>
+                </div>
+                <div class="card p-6 md:col-span-1 lg:col-span-1">
+                    <h3 class="section-title text-lg mb-3">Key Trends from Negative Reviews</h3>
+                    <div id="trends-list" class="space-y-2"></div>
+                    <div id="trends-stats" class="w-full text-sm mt-4"></div>
+                </div>
+                <div class="space-y-6 md:col-span-2 lg:col-span-1">
+                    <div id="category-stats" class="stat-card"></div>
+                    <div id="region-stats" class="stat-card"></div>
+                    <div id="rating-stats" class="stat-card"></div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="card p-6 flex flex-col items-center">
+                    <h3 class="section-title text-lg mb-2">Profit Over Time</h3>
+                    <img id="profit-time-chart" src="" alt="Profit Over Time Chart" class="max-w-full h-auto"/>
+                    <div id="profit-stats" class="w-full text-sm mt-4"></div>
+                </div>
+                <div class="card p-6 flex flex-col items-center">
+                    <h3 class="section-title text-lg mb-2">Rating vs. Predicted Sentiment</h3>
+                    <img id="rating-sentiment-chart" src="" alt="Rating vs Sentiment Heatmap" class="max-w-full h-auto"/>
+                    <p class="text-xs text-slate-500 mt-2 text-center">Compares star ratings with AI-predicted sentiment from review text.</p>
+                </div>
+                <div class="card p-6 flex flex-col items-center">
+                    <h3 class="section-title text-lg mb-2">Sales by Region</h3>
+                    <img id="sales-region-chart" src="" alt="Sales by Region Chart" class="max-w-full h-auto"/>
+                </div>
+                 <div class="card p-6 flex flex-col items-center">
+                    <h3 class="section-title text-lg mb-2">Profit by Category</h3>
+                    <img id="category-performance-chart" src="" alt="Category Performance Chart" class="max-w-full h-auto"/>
+                </div>
+            </div>
+
+            <!-- Future Predictions Section -->
+            <section class="mb-10">
+                <h2 class="section-title text-2xl my-4 justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.22 6.82a2 2 0 0 0-2.83 0L6.45 14.76l-1.35-1.35a2 2 0 0 0-2.83 0v0a2 2 0 0 0 0 2.83l4.18 4.18a2 2 0 0 0 2.83 0L19 8.18a2 2 0 0 0 0-2.83Z"/><path d="M22 12A10 10 0 1 1 12 2"/></svg>
+                    <span>Future Predictions</span>
+                </h2>
+                <div class="card p-4 mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-slate-600">Forecast model</p>
+                        <p class="text-xs text-slate-500">Switch algorithms to compare outlooks.</p>
+                    </div>
+                    <select id="model-selector" class="border border-slate-300 rounded-lg px-4 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50">
+                        <option value="">Loading models...</option>
+                    </select>
+                </div>
+                <div id="model-metrics" class="card p-4 mb-6 hidden text-center">
+                    <p class="text-sm text-slate-500">Model metrics</p>
+                    <p class="text-lg font-semibold text-slate-800" id="model-metrics-content"></p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                     <div id="top-product-prediction-stats" class="md:col-span-2"></div>
+                </div>
+                <div class="space-y-8">
+                    <div class="card p-6 flex flex-col items-center">
+                        <h3 class="section-title text-lg mb-2">Overall Profit Forecast</h3>
+                        <img id="profit-forecast-chart" src="" alt="Profit Forecast" class="max-w-full h-auto"/>
+                        <div id="profit-prediction-stats" class="w-full text-sm mt-4"></div>
+                    </div>
+                    <div class="card p-6 flex flex-col items-center">
+                        <h3 class="section-title text-lg mb-2">Overall Sales Forecast</h3>
+                        <img id="sales-forecast-chart" src="" alt="Sales Forecast" class="max-w-full h-auto"/>
+                        <div id="sales-prediction-stats" class="w-full text-sm mt-4"></div>
+                    </div>
+                    <div class="card p-6 flex flex-col items-center">
+                        <h3 class="section-title text-lg mb-2">Top Category Sales Forecast</h3>
+                        <img id="top-category-sales-forecast-chart" src="" alt="Top Category Sales Forecast" class="max-w-full h-auto"/>
+                        <div id="top-category-sales-prediction-stats" class="w-full text-sm mt-4"></div>
+                    </div>
+                    <div class="card p-6 flex flex-col items-center">
+                        <h3 class="section-title text-lg mb-2">Sentiment Trend Forecast</h3>
+                        <img id="sentiment-trend-chart" src="" alt="Sentiment Trend" class="max-w-full h-auto"/>
+                         <div id="sentiment-prediction-stats" class="w-full text-sm mt-4"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        let forecastModelsPayload = null;
+
+        document.getElementById('upload-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+            const loadingDiv = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            const resultsDiv = document.getElementById('results');
+
+            if (!file) {
+                errorDiv.textContent = 'Please select a file to analyze.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            loadingDiv.classList.remove('hidden');
+            errorDiv.classList.add('hidden');
+            resultsDiv.classList.add('hidden');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'An unknown error occurred.');
+                
+                // Populate Charts
+                Object.keys(data.charts).forEach(key => {
+                    const imgEl = document.getElementById(key.replace(/_/g, '-') + '-chart');
+                    if(imgEl) {
+                        updateChartImage(imgEl, data.charts[key]);
+                    }
+                });
+
+                // Populate Trends
+                const trendsList = document.getElementById('trends-list');
+                trendsList.innerHTML = '';
+                if (data.trends.length > 0) {
+                    data.trends.forEach(trend => {
+                        trendsList.innerHTML += `<div class="bg-slate-100 p-2 rounded-md text-slate-700 text-sm font-medium">${trend}</div>`;
+                    });
+                } else {
+                    trendsList.innerHTML = '<p class="text-slate-500 text-sm">No significant trends found.</p>';
+                }
+                
+                // Populate Stats
+                const stats = data.summary_stats;
+                document.getElementById('sentiment-stats').innerHTML = `<div class="stat-card"><strong class="text-green-600">Positive:</strong> ${stats.sentiment.positive_count} (${stats.sentiment.positive_pct})</div><div class="stat-card mt-2"><strong class="text-red-600">Negative:</strong> ${stats.sentiment.negative_count} (${stats.sentiment.negative_pct})</div><div class="stat-card mt-2"><strong class="text-slate-600">Neutral:</strong> ${stats.sentiment.neutral_count} (${stats.sentiment.neutral_pct})</div>`;
+                document.getElementById('profit-stats').innerHTML = `<div class="stat-card"><div><p class="text-sm text-slate-500">Total Profit</p><p class="text-xl font-bold text-slate-800">${stats.profit.total_profit}</p></div><div><p class="text-sm text-slate-500">Avg. Monthly Profit</p><p class="text-xl font-bold text-slate-800">${stats.profit.avg_monthly_profit}</p></div></div>`;
+                document.getElementById('trends-stats').innerHTML = `<div class="stat-card"><strong>Negative Reviews Analyzed:</strong> <span class="font-bold">${stats.trends.negative_reviews_count}</span></div>`;
+                
+                document.getElementById('category-stats').innerHTML = `<div class="stat-card-icon bg-indigo-100 text-indigo-600"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg></div><div><p class="text-sm text-slate-500">Top Category (Profit)</p><p class="text-lg font-bold text-slate-800">${stats.category.top_category} (${stats.category.top_category_profit})</p></div>`;
+                document.getElementById('region-stats').innerHTML = `<div class="stat-card-icon bg-green-100 text-green-600"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><p class="text-sm text-slate-500">Top Region (Sales)</p><p class="text-lg font-bold text-slate-800">${stats.region.top_region} (${stats.region.top_region_sales} units)</p></div>`;
+                document.getElementById('rating-stats').innerHTML = `<div class="stat-card-icon bg-yellow-100 text-yellow-600"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div><p class="text-sm text-slate-500">Overall Avg. Rating</p><p class="text-lg font-bold text-slate-800">${stats.rating.avg_rating}</p></div>`;
+                
+                // Predictions
+                const preds = stats.predictions;
+                if (data.forecast_models && data.forecast_models.options?.length) {
+                    forecastModelsPayload = data.forecast_models;
+                    initializeModelSelector(forecastModelsPayload);
+                } else {
+                    renderPredictionStats(stats.predictions);
+                    updateModelMetrics(null, null);
+                }
+
+                // Recommendations
+                const recs = data.recommendations;
+                const recsContent = document.getElementById('recommendations-content');
+                recsContent.innerHTML = ''; 
+                if (recs.focus_on) recsContent.innerHTML += `<div class="recommendation-card border-green-500"><strong class="flex items-center gap-2 text-green-700"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>High Potential:</strong><p class="mt-1 pl-1 text-slate-600">${recs.focus_on}</p></div>`;
+                if (recs.optimize) recsContent.innerHTML += `<div class="recommendation-card border-yellow-500"><strong class="flex items-center gap-2 text-yellow-700"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Optimize:</strong><p class="mt-1 pl-1 text-slate-600">${recs.optimize}</p></div>`;
+                if (recs.promote) recsContent.innerHTML += `<div class="recommendation-card border-blue-500"><strong class="flex items-center gap-2 text-blue-700"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="4"/><polyline points="18 10 12 4 6 10"/></svg>Promote:</strong><p class="mt-1 pl-1 text-slate-600">${recs.promote}</p></div>`;
+                if (recs.investigate) recsContent.innerHTML += `<div class="recommendation-card border-red-500"><strong class="flex items-center gap-2 text-red-700"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>Investigate:</strong><p class="mt-1 pl-1 text-slate-600">${recs.investigate}</p></div>`;
+
+                resultsDiv.classList.remove('hidden');
+
+            } catch (error) {
+                errorDiv.textContent = 'Error: ' + error.message;
+                errorDiv.classList.remove('hidden');
+            } finally {
+                loadingDiv.classList.add('hidden');
+            }
+        });
+
+        function updateChartImage(element, base64) {
+            if (!element) return;
+            if (base64) {
+                element.src = 'data:image/png;base64,' + base64;
+                element.classList.remove('opacity-30');
+            } else {
+                element.removeAttribute('src');
+                element.alt = 'Not enough data';
+                element.classList.add('opacity-30');
+            }
+        }
+
+        function renderPredictionStats(preds = {}) {
+            if (!preds) return;
+            document.getElementById('profit-prediction-stats').innerHTML = `<div class="stat-card"><div><p class="text-sm text-slate-500">Predicted Profit Next Month</p><p class="text-xl font-bold text-slate-800">${preds.next_month_profit || '$0.00'}</p></div></div>`;
+            document.getElementById('sales-prediction-stats').innerHTML = `<div class="stat-card"><div><p class="text-sm text-slate-500">Predicted Sales Next Month</p><p class="text-xl font-bold text-slate-800">${preds.next_month_sales || '0'} units</p></div></div>`;
+            document.getElementById('sentiment-prediction-stats').innerHTML = `<div class="stat-card"><div><p class="text-sm text-slate-500">Predicted Sentiment Next Month</p><p class="text-xl font-bold text-slate-800">${preds.next_month_sentiment || '0.0% Positive'}</p></div></div>`;
+            document.getElementById('top-category-sales-prediction-stats').innerHTML = `<div class="stat-card"><div><p class="text-sm text-slate-500">Next Month's Sales for ${preds.top_category_name || 'N/A'}</p><p class="text-xl font-bold text-slate-800">${preds.next_month_top_category_sales || '0 units'}</p></div></div>`;
+            document.getElementById('top-product-prediction-stats').innerHTML = `<div class="card p-6 text-center"><p class="text-sm text-slate-500">Predicted Top Seller Next Month</p><p class="text-2xl font-bold text-indigo-600 mt-2">${preds.next_month_top_product || 'N/A'}</p></div>`;
+        }
+
+        function initializeModelSelector(payload) {
+            const selector = document.getElementById('model-selector');
+            if (!selector || !payload || !payload.options?.length) {
+                selector?.setAttribute('disabled', 'true');
+                return;
+            }
+            selector.innerHTML = '';
+            payload.options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option.key;
+                opt.textContent = option.label;
+                selector.appendChild(opt);
+            });
+            selector.removeAttribute('disabled');
+            const defaultKey = payload.default_key || payload.options[0].key;
+            selector.value = defaultKey;
+            selector.addEventListener('change', (event) => {
+                applyModelSelection(event.target.value);
+            });
+            applyModelSelection(defaultKey);
+        }
+
+        function applyModelSelection(modelKey) {
+            if (!forecastModelsPayload || !forecastModelsPayload.models?.[modelKey]) return;
+            const modelEntry = forecastModelsPayload.models[modelKey];
+            const charts = modelEntry.charts || {};
+            updateChartImage(document.getElementById('profit-forecast-chart'), charts.profit_forecast);
+            updateChartImage(document.getElementById('sales-forecast-chart'), charts.sales_forecast);
+            updateChartImage(document.getElementById('sentiment-trend-chart'), charts.sentiment_trend);
+            updateChartImage(document.getElementById('top-category-sales-forecast-chart'), charts.top_category_sales_forecast);
+            renderPredictionStats(modelEntry.predictions);
+            updateModelMetrics(modelEntry.label, modelEntry.metrics);
+        }
+
+        function updateModelMetrics(label, metrics) {
+            const wrapper = document.getElementById('model-metrics');
+            const content = document.getElementById('model-metrics-content');
+            if (!wrapper || !content) return;
+            if (!label || !metrics) {
+                wrapper.classList.add('hidden');
+                content.textContent = '';
+                return;
+            }
+            wrapper.classList.remove('hidden');
+            const r2 = typeof metrics.r2 === 'number' ? metrics.r2.toFixed(3) : '0.000';
+            const f1 = typeof metrics.f1 === 'number' ? metrics.f1.toFixed(3) : '0.000';
+            content.innerHTML = `F1: <span class="font-semibold">${f1}</span>`;
+        }
+    </script>
+</body>
+</html>
