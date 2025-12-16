@@ -7,4 +7,4 @@ seaborn
 transformers
 torch
 numpy
-
+gunicorn
