@@ -20,6 +20,8 @@ from datetime import datetime, timedelta
 from pandas.tseries.offsets import DateOffset
 import warnings
 
+import os
+
 warnings.filterwarnings("ignore", category=UserWarning, module='sklearn')
 
 app = Flask(__name__)
@@ -472,4 +474,7 @@ def analyze_data():
 
 if __name__ == '__main__':
     train_model()
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(
+        host='0.0.0.0',
+        port=int(os.environ.get("PORT", 8000))
+    )
