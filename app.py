@@ -472,8 +472,9 @@ def analyze_data():
         print(f"An error occurred during analysis: {e}")
         return jsonify({'error': 'An error occurred while processing the file.'}), 500
 
+train_model()
 if __name__ == '__main__':
-    train_model()
+    
     app.run(
         host='0.0.0.0',
         port=int(os.environ.get("PORT", 8000))
