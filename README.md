@@ -1,5 +1,7 @@
 # Business Insights Dashboard – Technical Overview
 
+Deployed here : [RENDER](https://review-sentiment-analysis-using-ml.onrender.com/)
+
 ## 1. Purpose
 
 This project turns raw transactional CSV files into an interactive business-intelligence dashboard. It automates customer review sentiment analysis, highlights sales/ profit drivers, and provides multi‑model forecasts with performance metrics so stakeholders can compare algorithms directly inside the UI.
